@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel Executivo | Fluxo de Caixa do Maranhão</title>
+<style>
+:root {
+ --navy:#0a2746; --blue:#0b5cab; --blue2:#2f80c9; --cyan:#76b7e5;
+ --bg:#eef3f8; --card:#fff; --text:#102a43; --muted:#66788a;
+ --line:#dbe4ee; --green:#16845b; --red:#c73b45; --amber:#c98a12;
+ --shadow:0 12px 30px rgba(10,39,70,.08);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+.topbar{background:linear-gradient(120deg,var(--navy),#0d477d 65%,#1477b8);color:white;padding:28px 34px 24px;position:relative;overflow:hidden}
+.topbar:after{content:"";position:absolute;right:-70px;top:-120px;width:330px;height:330px;border-radius:50%;background:rgba(255,255,255,.08)}
+.brand{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:relative;z-index:1}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.14em;font-weight:800;opacity:.75}
+h1{margin:7px 0 5px;font-size:29px;line-height:1.1}
+.subtitle{font-size:13px;opacity:.86}
+.header-chip{padding:10px 14px;border:1px solid rgba(255,255,255,.28);border-radius:12px;background:rgba(255,255,255,.09);font-size:12px;white-space:nowrap}
+.toolbar{display:flex;justify-content:space-between;align-items:end;gap:16px;padding:18px 34px 0}
+.filter{display:flex;flex-direction:column;gap:6px}
+.filter label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;color:var(--muted)}
+select{min-width:210px;border:1px solid var(--line);border-radius:12px;padding:11px 14px;background:#fff;color:var(--text);font-weight:700;box-shadow:0 3px 10px rgba(10,39,70,.04)}
+.note{font-size:11px;color:var(--muted)}
+main{padding:18px 34px 34px}
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(170px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}
+.kpi{padding:17px 18px 16px;position:relative;overflow:hidden}
+.kpi:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--blue)}
+.kpi-title{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:800}
+.kpi-value{font-size:24px;font-weight:850;margin-top:10px}
+.kpi-meta{font-size:11px;color:var(--muted);margin-top:7px}
+.kpi.good:before{background:var(--green)} .kpi.bad:before{background:var(--red)} .kpi.warn:before{background:var(--amber)}
+.goodText{color:var(--green)} .badText{color:var(--red)} .warnText{color:var(--amber)}
+.layout-main{display:grid;grid-template-columns:minmax(0,2.05fr) minmax(310px,.95fr);gap:14px;margin-top:14px}
+.layout-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.panel{padding:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:8px}
+.panel h2{font-size:15px;margin:0 0 4px}
+.panel p{font-size:11px;color:var(--muted);margin:0}
+.metric-tag{font-size:10px;font-weight:800;padding:6px 9px;border-radius:999px;background:#edf5fc;color:var(--blue)}
+canvas{width:100%;height:280px;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px;font-size:11px;color:var(--muted)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.insight-box{display:grid;gap:10px;margin-top:12px}
+.insight{padding:12px 13px;border:1px solid var(--line);border-radius:13px;background:#fbfdff}
+.insight-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.insight-title{font-size:12px;font-weight:800}
+.badge{font-size:10px;color:white;font-weight:800;padding:5px 8px;border-radius:999px}
+.insight-text{font-size:11px;color:var(--muted);line-height:1.45;margin-top:6px}
+.table-card{margin-top:14px;padding:18px}
+.table-wrap{overflow:auto;max-height:330px;border:1px solid var(--line);border-radius:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:10px 11px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left;position:sticky;left:0;background:inherit}
+th{background:#f5f9fd;color:#49627a;font-size:11px;position:sticky;top:0;z-index:2}
+tbody tr:nth-child(even){background:#fbfdff}
+.footer{padding:0 34px 26px;font-size:11px;color:var(--muted)}
+@media(max-width:1150px){.kpis{grid-template-columns:repeat(3,1fr)}.layout-main,.layout-2{grid-template-columns:1fr}}
+@media(max-width:680px){.topbar,.toolbar,main,.footer{padding-left:16px;padding-right:16px}.brand{display:block}.header-chip{margin-top:14px;display:inline-block}.kpis{grid-template-columns:1fr 1fr}h1{font-size:24px}}
+
+.invest-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 16px}
+.mini-kpi{border:1px solid var(--line);border-radius:13px;padding:12px;background:#fbfdff}
+.mini-kpi .yr{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.mini-kpi .amt{font-size:17px;font-weight:850;margin-top:5px}
+.invest-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:18px}
+.invest-filter{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:6px}
+@media(max-width:900px){.invest-grid{grid-template-columns:1fr}.invest-summary{grid-template-columns:1fr 1fr}}
+
+
+.liquidity-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:14px}
+.liquidity-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.liq-card{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfdff}
+.liq-card .label{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.liq-card .value{font-size:18px;font-weight:850;margin-top:6px}
+.liq-card .sub{font-size:10px;color:var(--muted);margin-top:4px}
+.liquidity-main{padding:20px}
+.liquidity-main #cashAvailabilityChart{height:340px}
+.liquidity-main .hero-value{font-size:32px;font-weight:900;margin-top:8px}
+.liquidity-main .hero-sub{font-size:12px;color:var(--muted);margin-top:6px}
+@media(max-width:950px){.liquidity-grid{grid-template-columns:1fr}.liquidity-kpis{grid-template-columns:1fr 1fr}}
+
+
+.powers-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 16px}
+.power-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:18px}
+.power-grid-2{display:grid;grid-template-columns:1fr;gap:18px;margin-top:14px}
+.power-filter{display:flex;justify-content:space-between;align-items:end;gap:12px;margin-bottom:6px}
+@media(max-width:900px){.power-grid{grid-template-columns:1fr}.powers-summary{grid-template-columns:1fr 1fr}}
+
+.capag-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 16px}
+.capag-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px}
+.capag-kpi{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fbfdff}
+.capag-kpi .yr{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.capag-kpi .value{font-size:22px;font-weight:900;margin-top:6px}
+.capag-kpi .note{font-size:10px;color:var(--muted);margin-top:5px}
+.capag-insights{display:grid;gap:9px}
+.capag-insight{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:#fbfdff}
+.capag-insight strong{font-size:11px;display:block;margin-bottom:4px}
+.capag-insight span{font-size:10.5px;color:var(--muted);line-height:1.45}
+.capag-note-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+
+.capag-filter{display:flex;align-items:end;gap:10px;margin:4px 0 12px}
+.capag-filter .filter{max-width:220px}
+.capag-footnote{margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.45}
+.capag-badge{font-size:10px;font-weight:850;padding:5px 8px;border-radius:999px;background:#edf5fc;color:var(--blue)}
+@media(max-width:950px){.capag-grid{grid-template-columns:1fr}.capag-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.capag-summary{grid-template-columns:1fr}}
+
+
+.treasury-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 16px}
+.treasury-kpi{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fbfdff}
+.treasury-kpi .label{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em}
+.treasury-kpi .value{font-size:21px;font-weight:900;margin-top:6px}
+.treasury-kpi .note{font-size:10px;color:var(--muted);margin-top:5px;line-height:1.35}
+.treasury-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(320px,.9fr);gap:18px}
+.treasury-bars{display:grid;gap:10px;margin-top:10px}
+.treasury-bar-row{display:grid;grid-template-columns:150px 1fr 92px;align-items:center;gap:9px}
+.treasury-bar-label{font-size:10px;font-weight:750;color:#334e68}
+.treasury-track{height:11px;background:#edf2f7;border-radius:999px;overflow:hidden}
+.treasury-fill{height:100%;background:var(--blue);border-radius:999px}
+.treasury-bar-value{text-align:right;font-size:10px;font-weight:800}
+.treasury-insights{display:grid;gap:9px}
+.treasury-insight{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:#fbfdff}
+.treasury-insight strong{display:block;font-size:11px;margin-bottom:4px}
+.treasury-insight span{font-size:10.5px;color:var(--muted);line-height:1.45}
+.treasury-footnote{margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-size:10px;color:var(--muted);line-height:1.45}
+@media(max-width:950px){.treasury-grid{grid-template-columns:1fr}.treasury-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.treasury-summary{grid-template-columns:1fr}.treasury-bar-row{grid-template-columns:110px 1fr 78px}}
+
+
+.treasury-table-wrap{margin-top:18px;border-top:1px solid var(--line);padding-top:14px}
+.treasury-table{width:100%;border-collapse:separate;border-spacing:0;font-size:10.5px}
+.treasury-table th{background:#f6f9fc;color:#486581;text-align:left;padding:9px;border-bottom:1px solid var(--line);font-size:10px}
+.treasury-table td{padding:8px 9px;border-bottom:1px solid #edf2f7;vertical-align:top}
+.treasury-table td:last-child,.treasury-table th:last-child{text-align:right;white-space:nowrap}
+.treasury-group td{background:#eef5fb;font-weight:850;color:#163a5f;border-top:1px solid #d9e6f2}
+.treasury-group .desc{font-weight:500;color:#627d98;font-size:9.8px;display:block;margin-top:3px;line-height:1.35}
+.treasury-item td:first-child{padding-left:26px;color:#334e68}
+.treasury-total td{background:#f8fafc;font-weight:900;border-top:2px solid #cbd5e1}
+.treasury-subtotal-label{display:flex;align-items:center;gap:6px}
+.treasury-subtotal-label:before{content:"▾";font-size:10px;color:#829ab1}
+@media(max-width:760px){.treasury-table{font-size:9.5px}.treasury-table th,.treasury-table td{padding:7px 6px}.treasury-item td:first-child{padding-left:16px}}
+
+
+/* Tabela institucional - posição financeira */
+.treasury-table-wrap{background:#fff;border:1px solid #d9e2ec;border-radius:14px;padding:16px;margin-top:20px}
+.treasury-table-wrap .panel-head{margin-bottom:12px}
+.treasury-table{border-collapse:collapse;border:1px solid #d9e2ec;background:#fff}
+.treasury-table thead th{background:#173f5f;color:#fff;font-size:9.5px;font-weight:800;text-transform:uppercase;letter-spacing:.045em;padding:10px 11px;border:1px solid #315b78}
+.treasury-table td{padding:8px 11px;border:1px solid #e4eaf0;color:#334e68}
+.treasury-group td{background:#eaf1f7;color:#173f5f;border-top:2px solid #9fb3c8;border-bottom:1px solid #cbd8e3;padding:10px 11px}
+.treasury-group .desc{color:#526d82;font-size:9.6px;font-weight:500;margin-top:4px}
+.treasury-item:nth-child(even) td{background:#fbfcfd}
+.treasury-item td:first-child{padding-left:30px;font-weight:600}
+.treasury-item td:nth-child(2){color:#627d98;font-size:9.7px}
+.treasury-subtotal-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.025em}
+.treasury-subtotal-label:before{content:"";width:4px;height:16px;background:#315b78;border-radius:2px;display:inline-block}
+.treasury-total td{background:#173f5f;color:#fff;border-color:#173f5f;font-size:11px;padding:11px;font-weight:900}
+.treasury-table td:last-child{font-variant-numeric:tabular-nums;font-weight:750}
+.treasury-table-caption{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-bottom:10px;padding:9px 11px;background:#f7f9fb;border-left:4px solid #315b78;font-size:9.8px;color:#526d82}
+.treasury-table-caption strong{color:#173f5f}
+
+
+.treasury-table th:nth-child(2),.treasury-table th:nth-child(3),
+.treasury-table td:nth-child(2),.treasury-table td:nth-child(3){text-align:right;white-space:nowrap}
+.treasury-table th:first-child,.treasury-table td:first-child{text-align:left}
+.treasury-table td:nth-child(3){font-variant-numeric:tabular-nums;color:#526d82;font-weight:750}
+.treasury-group td:nth-child(3){color:#173f5f;font-weight:900}
+.treasury-total td:nth-child(3){color:#fff}
+
+
+.treasury-grid{grid-template-columns:minmax(0,1.65fr) minmax(300px,.75fr);align-items:start}
+.treasury-chart-box{background:#fbfdff;border:1px solid var(--line);border-radius:14px;padding:12px 14px 8px}
+.treasury-chart-meta{display:flex;justify-content:space-between;gap:12px;align-items:center;margin:2px 0 8px;font-size:10px;color:var(--muted)}
+.treasury-chart-meta strong{color:#173f5f}
+#treasuryComponentsChart{width:100%;height:330px;display:block}
+@media(max-width:950px){.treasury-grid{grid-template-columns:1fr}#treasuryComponentsChart{height:360px}}
+
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand">
+  <div>
+   <div class="eyebrow">Secretaria Adjunta do Tesouro e Dívida</div>
+   <h1>Painel Executivo do Fluxo de Caixa</h1>
+   <div class="subtitle">Estado do Maranhão • Monitoramento mensal da performance financeira de 2026</div>
+  </div>
+  <div class="header-chip">Valores em R$ milhões</div>
+ </div>
+</header>
+
+<div class="toolbar">
+ <div class="filter">
+  <label>Mês de referência</label>
+  <select id="monthSelect"></select>
+ </div>
+ <div class="note">Agosto corresponde ao realizado até o 2º decêndio; setembro a dezembro permanecem como projeção.</div>
+</div>
+
+<main>
+ <section class="kpis">
+  <div class="card kpi" id="cardReceita"><div class="kpi-title">Receitas</div><div class="kpi-value" id="kpiReceita"></div><div class="kpi-meta" id="subReceita"></div></div>
+  <div class="card kpi" id="cardDespesa"><div class="kpi-title">Despesas</div><div class="kpi-value" id="kpiDespesa"></div><div class="kpi-meta" id="subDespesa"></div></div>
+  <div class="card kpi" id="cardResultado"><div class="kpi-title">Resultado do mês</div><div class="kpi-value" id="kpiResultado"></div><div class="kpi-meta">Receitas menos despesas</div></div>
+  <div class="card kpi" id="cardLiquidez"><div class="kpi-title">Cobertura das despesas</div><div class="kpi-value" id="kpiLiquidez"></div><div class="kpi-meta">Receitas ÷ despesas</div></div>
+  <div class="card kpi" id="cardInvest"><div class="kpi-title">Investimentos</div><div class="kpi-value" id="kpiInvest"></div><div class="kpi-meta" id="subInvest"></div></div>
+ </section>
+
+ <section class="liquidity-grid">
+  <article class="card liquidity-main">
+   <div class="panel-head">
+    <div>
+     <h2>Disponibilidade de Caixa</h2>
+     <p>Evolução do estoque de liquidez do Tesouro</p>
+    </div>
+    <span class="metric-tag">Liquidez</span>
+   </div>
+   <div class="hero-value" id="cashAvailabilityValue"></div>
+   <div class="hero-sub" id="cashAvailabilityVariation"></div>
+   <canvas id="cashAvailabilityChart"></canvas>
+   <div class="legend">
+    <span><i style="background:#0b5cab"></i>Disponibilidade de Caixa</span>
+    <span><i style="background:#c98a12"></i>Referência de R$ 2,0 bi</span>
+   </div>
+   <div class="liquidity-kpis" id="liquidityKpis"></div>
+  </article>
+ </section>
+
+ <section class="layout-main">
+  <article class="card panel">
+   <div class="panel-head"><div><h2>Receitas versus despesas</h2><p>Evolução mensal — realizado de janeiro a julho e 2º decêndio de agosto; projeção de setembro a dezembro</p></div><span class="metric-tag">Fluxo mensal</span></div>
+   <canvas id="cashChart"></canvas>
+   <div class="legend"><span><i style="background:#0b5cab"></i>Receitas</span><span><i style="background:#c73b45"></i>Despesas</span></div>
+  </article>
+  <aside class="card panel">
+   <div class="panel-head"><div><h2>Leitura executiva</h2><p>Sinais automáticos do mês selecionado</p></div></div>
+   <div class="insight-box" id="insights"></div>
+  </aside>
+ </section>
+
+ <section class="layout-2">
+  <article class="card panel">
+   <div class="panel-head"><div><h2>Resultado mensal</h2><p>Superávit e déficit ao longo do exercício</p></div></div>
+   <canvas id="resultChart"></canvas>
+  </article>
+  <article class="card panel">
+   <div class="panel-head"><div><h2>Composição das receitas</h2><p>Arrecadação tributária, FPE e demais ingressos</p></div></div>
+   <canvas id="revenueChart"></canvas>
+   <div class="legend"><span><i style="background:#0b5cab"></i>Tributária</span><span><i style="background:#2f80c9"></i>FPE</span><span><i style="background:#9ccbeb"></i>Demais</span></div>
+  </article>
+ </section>
+
+ <section class="layout-2">
+  <article class="card panel">
+   <div class="panel-head"><div><h2>Estrutura da despesa</h2><p>Obrigatórias e discricionárias por mês</p></div></div>
+   <canvas id="expenseMixChart"></canvas>
+   <div class="legend"><span><i style="background:#0a2746"></i>Obrigatórias</span><span><i style="background:#d7a23a"></i>Discricionárias</span></div>
+  </article>
+  <article class="card panel">
+   <div class="panel-head"><div><h2>Principais pressões de caixa</h2><p>Maiores componentes no mês selecionado</p></div></div>
+   <canvas id="pressureChart"></canvas>
+  </article>
+ </section>
+
+
+ <section class="card panel" style="margin-top:14px">
+  <div class="panel-head">
+   <div>
+    <h2>Resultado acumulado mês a mês</h2>
+    <p>Evolução do saldo financeiro acumulado ao longo do exercício</p>
+   </div>
+   <span class="metric-tag">Acumulado</span>
+  </div>
+  <canvas id="cumulativeResultChart"></canvas>
+  <div class="legend">
+   <span><i style="background:#0b5cab"></i>Resultado acumulado</span>
+  </div>
+ </section>
+
+
+ <section class="card panel" style="margin-top:14px">
+  <div class="panel-head">
+   <div><h2>Repasses aos Poderes</h2><p>Evolução anual, distribuição por Poder e composição do gasto • 2026 parcial</p></div>
+   <span class="metric-tag">Obrigatórios</span>
+  </div>
+
+  <div class="powers-summary" id="powersSummary"></div>
+
+  <div class="power-grid">
+   <div>
+    <div class="panel-head"><div><h2>Total anual repassado</h2><p>Evolução consolidada de ALEMA, DPE, PGJ, TCE e TJ</p></div></div>
+    <canvas id="powersTotalChart"></canvas>
+    <div class="legend"><span><i style="background:#0b5cab"></i>Total de repasses</span></div>
+   </div>
+
+   <div>
+    <div class="power-filter">
+     <div><h2 style="font-size:15px;margin:0 0 4px">Distribuição por Poder</h2><p style="font-size:11px;color:var(--muted);margin:0">Ranking dos repasses no exercício selecionado</p></div>
+     <div class="filter"><label>Exercício</label><select id="powerYearSelect"><option>2023</option><option>2024</option><option>2025</option><option value="2026" selected>2026 (parcial)</option></select></div>
+    </div>
+    <canvas id="powersRankingChart"></canvas>
+   </div>
+  </div>
+
+  <div class="power-grid-2">
+   <div>
+    <div class="panel-head"><div><h2>Composição percentual dos repasses</h2><p>Participação relativa de cada Poder em cada exercício</p></div></div>
+    <canvas id="powersCompositionChart"></canvas>
+    <div class="legend">
+      <span><i style="background:#0a2746"></i>TJ</span>
+      <span><i style="background:#0b5cab"></i>PGJ</span>
+      <span><i style="background:#2f80c9"></i>ALEMA</span>
+      <span><i style="background:#76b7e5"></i>DPE</span>
+      <span><i style="background:#d7a23a"></i>TCE</span>
+    </div>
+   </div>
+  </div>
+ </section>
+
+
+ <section class="card panel" style="margin-top:14px">
+  <div class="panel-head">
+   <div><h2>Evolução dos investimentos por órgão</h2><p>Comparação anual do total investido e dos maiores órgãos executores • 2026 parcial</p></div>
+   <span class="metric-tag">2023–2026</span>
+  </div>
+  <div class="invest-summary" id="investSummary"></div>
+  <div class="invest-grid">
+   <div>
+    <div class="panel-head"><div><h2>Total anual investido</h2><p>Valores agregados por exercício</p></div></div>
+    <canvas id="annualInvestmentChart"></canvas>
+    <div class="legend"><span><i style="background:#0b5cab"></i>Investimento total</span></div>
+   </div>
+   <div>
+    <div class="invest-filter">
+     <div><h2 style="font-size:15px;margin:0 0 4px">Top 5 órgãos que mais investiram</h2><p style="font-size:11px;color:var(--muted);margin:0">Ranking dos maiores investimentos no exercício selecionado</p></div>
+     <div class="filter"><label>Exercício</label><select id="investmentYearSelect"><option>2023</option><option>2024</option><option>2025</option><option value="2026" selected>2026 (parcial)</option></select></div>
+    </div>
+    <canvas id="investmentRankingChart"></canvas>
+   </div>
+  </div>
+ </section>
+
+
+
+ <section class="card panel" style="margin-top:14px">
+  <div class="panel-head">
+   <div>
+    <h2>Posição Financeira do Tesouro</h2>
+    <p>Saldos por domicílio bancário controlados pelo Tesouro • posição em 31/08/2026</p>
+   </div>
+   <span class="metric-tag">Liquidez e composição do caixa</span>
+  </div>
+
+  <div class="treasury-summary">
+   <div class="treasury-kpi"><div class="label">Saldo financeiro total</div><div class="value">R$ 1.090 bi</div><div class="note">Soma dos saldos informados na posição bancária de 31/08/2026</div></div>
+   <div class="treasury-kpi"><div class="label">Provisões identificadas</div><div class="value">R$ 555.0 mi</div><div class="note">50,90% do saldo total • Poupanças, FEMA/Vale, 13º e FOPAG</div></div>
+   <div class="treasury-kpi"><div class="label">Poupança I + II</div><div class="value">R$ 245.4 mi</div><div class="note">22,51% da posição financeira apresentada</div></div>
+   <div class="treasury-kpi"><div class="label">Concentração Top 5</div><div class="value">68.1%</div><div class="note">R$ 742.437.073,13 concentrados nos cinco maiores componentes</div></div>
+  </div>
+  <div class="treasury-grid">
+   
+<div>
+    <div class="panel-head">
+     <div>
+      <h2>Maiores componentes do saldo</h2>
+      <p>Ranking das principais posições financeiras • valores em R$ milhões</p>
+     </div>
+    </div>
+    <div class="treasury-chart-box">
+     <div class="treasury-chart-meta">
+      <span><strong>Top 10 componentes</strong> • posição em 31/08/2026</span>
+      <span>Valores em R$ milhões</span>
+     </div>
+     <canvas id="treasuryComponentsChart"></canvas>
+    </div>
+   </div>
+   <div>
+    <div class="panel-head"><div><h2>Insights executivos</h2>
+<p>Leitura gerencial da composição financeira</p></div></div>
+    <div class="treasury-insights">
+<div class="treasury-insight"><strong>Posição financeira de R$ 1.090.251.198,33</strong><span>O saldo total dos domicílios bancários informados em 31/08/2026 alcança R$ 1.090.251.198,33, distribuído entre contas de movimentação, provisões, aplicações, fundos e recursos vinculados.</span></div>
+<div class="treasury-insight"><strong>Provisões concentram parcela relevante do caixa</strong><span>As provisões explicitamente identificadas somam R$ 554.972.563,41, equivalentes a 50,90% da posição financeira total.</span></div>
+<div class="treasury-insight"><strong>Poupança I permanece como principal reserva individual</strong><span>A Poupança I apresenta saldo de R$ 245.352.308,46, equivalente a 22,50% do total. A Poupança II foi reduzida para R$ 96.052,95.</span></div>
+<div class="treasury-insight"><strong>Conta Movimento ganha relevância no fechamento do mês</strong><span>O saldo da Conta Movimento alcança R$ 70.419.625,01, representando 6,46% da posição financeira.</span></div>
+<div class="treasury-insight"><strong>Transferências especiais permanecem pulverizadas</strong><span>Os diversos domicílios de transferências especiais somam R$ 81.274.802,18, equivalentes a 7,45% do saldo total.</span></div>
+</div></div></div><div class="treasury-table-wrap">
+   <div class="panel-head">
+    <div>
+     <h2>Demonstrativo Consolidado dos Saldos Financeiros</h2>
+     <p>Posição dos recursos financeiros sob gestão do Tesouro Estadual, classificados por natureza e finalidade • 31/08/2026</p>
+    </div>
+   </div>
+   <div class="treasury-table-caption">
+    <span><strong>Critério de apresentação:</strong> agrupamento gerencial por natureza e finalidade dos recursos.</span>
+    <span><strong>Valores em R$</strong></span>
+   </div>
+   <div style="overflow-x:auto">
+    <table class="treasury-table">
+     <thead><tr><th>Descrição / Identificação</th><th>Saldo Financeiro</th><th>Participação no Total</th></tr></thead>
+     <tbody><tr class="treasury-group"><td><div class="treasury-subtotal-label">Conta Única e segregações internas</div><span class="desc">Saldos mantidos na Conta Única e segregados gerencialmente por finalidade ou área de aplicação.</span></td><td>R$ 457.820.203,31</td><td>41,99%</td></tr><tr class="treasury-item"><td>Conta Única</td><td>R$ 6.926.900,63</td><td>0,64%</td></tr><tr class="treasury-item"><td>Conta Única – RTC</td><td>R$ 27.834.962,94</td><td>2,55%</td></tr><tr class="treasury-item"><td>Conta Única – SEDUC</td><td>R$ 30.469.040,67</td><td>2,79%</td></tr><tr class="treasury-item"><td>Conta Única – Saúde</td><td>R$ 147.140.937,66</td><td>13,50%</td></tr><tr class="treasury-item"><td>Conta Única – Provisão/Festas Culturais</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-item"><td>Conta Única – RTC/FAMEM</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-item"><td>Conta Única – Emendas Especiais</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-item"><td>Conta Única – Provisão/Poupança I</td><td>R$ 245.352.308,46</td><td>22,50%</td></tr><tr class="treasury-item"><td>Conta Única – Provisão/Poupança II</td><td>R$ 96.052,95</td><td>0,01%</td></tr><tr class="treasury-item"><td>Conta Única – Maranhão Livre da Fome</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Aplicações, provisões e contas de apoio</div><span class="desc">Recursos aplicados ou segregados para obrigações e finalidades previamente identificadas.</span></td><td>R$ 345.413.273,26</td><td>31,68%</td></tr><tr class="treasury-item"><td>Conta "C"</td><td>R$ 32.605.792,77</td><td>2,99%</td></tr><tr class="treasury-item"><td>Conta de Aplicação</td><td>R$ 3.283.278,49</td><td>0,30%</td></tr><tr class="treasury-item"><td>Provisão FEMA/Vale</td><td>R$ 99.524.202,00</td><td>9,13%</td></tr><tr class="treasury-item"><td>Aplicação – 13º Salário do Executivo</td><td>R$ 180.000.000,00</td><td>16,51%</td></tr><tr class="treasury-item"><td>Aplicação – 13º Salário dos Demais Poderes</td><td>R$ 30.000.000,00</td><td>2,75%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Movimentação financeira e folha</div><span class="desc">Contas utilizadas para movimentação financeira corrente, apoio ao FPE, folha e aplicações especiais.</span></td><td>R$ 94.809.721,87</td><td>8,70%</td></tr><tr class="treasury-item"><td>Conta Movimento</td><td>R$ 70.419.625,01</td><td>6,46%</td></tr><tr class="treasury-item"><td>Movimento/Aplicação Especial</td><td>R$ 12.057.695,14</td><td>1,11%</td></tr><tr class="treasury-item"><td>Aplicação Sul América</td><td>R$ 11.419.764,56</td><td>1,05%</td></tr><tr class="treasury-item"><td>Provisão Folha de Pessoal/FOPAG</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-item"><td>Apoio Financeiro do FPE</td><td>R$ 912.637,16</td><td>0,08%</td></tr><tr class="treasury-item"><td>Provisão Precatórios</td><td>R$ 0,00</td><td>0,00%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Precatórios e fundos específicos</div><span class="desc">Recursos segregados para precatórios e fundos com finalidade específica.</span></td><td>R$ 14.676.251,26</td><td>1,35%</td></tr><tr class="treasury-item"><td>Precatórios FUNDEF</td><td>R$ 4.569.688,58</td><td>0,42%</td></tr><tr class="treasury-item"><td>FUMACOP</td><td>R$ 10.106.562,68</td><td>0,93%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Investimentos e operações de crédito</div><span class="desc">Recursos vinculados a programas de investimento, financiamento e operações de crédito.</span></td><td>R$ 58.451.092,39</td><td>5,36%</td></tr><tr class="treasury-item"><td>PROINVEST</td><td>R$ 40.765.643,30</td><td>3,74%</td></tr><tr class="treasury-item"><td>PROFISCO II</td><td>R$ 13.487.634,36</td><td>1,24%</td></tr><tr class="treasury-item"><td>BNDES</td><td>R$ 649.347,86</td><td>0,06%</td></tr><tr class="treasury-item"><td>FMDINFRA</td><td>R$ 638.799,01</td><td>0,06%</td></tr><tr class="treasury-item"><td>Operação de Crédito PEF II</td><td>R$ 2.909.667,86</td><td>0,27%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Transferências especiais</div><span class="desc">Saldos distribuídos em contas específicas vinculadas a transferências especiais.</span></td><td>R$ 81.274.802,18</td><td>7,45%</td></tr><tr class="treasury-item"><td>Conta 8870-6</td><td>R$ 107.675,10</td><td>0,01%</td></tr><tr class="treasury-item"><td>Conta 9033-6</td><td>R$ 1.057.621,09</td><td>0,10%</td></tr><tr class="treasury-item"><td>Conta 9237-1</td><td>R$ 5.238.849,68</td><td>0,48%</td></tr><tr class="treasury-item"><td>Conta 9440-4</td><td>R$ 8.609.641,75</td><td>0,79%</td></tr><tr class="treasury-item"><td>Conta 9692-X</td><td>R$ 2.466.795,96</td><td>0,23%</td></tr><tr class="treasury-item"><td>Conta 9693-8</td><td>R$ 5.747.143,68</td><td>0,53%</td></tr><tr class="treasury-item"><td>Conta 9694-6</td><td>R$ 12.927.863,35</td><td>1,19%</td></tr><tr class="treasury-item"><td>Conta 9695-4</td><td>R$ 5.609.897,76</td><td>0,51%</td></tr><tr class="treasury-item"><td>Conta 9698-9</td><td>R$ 431.689,29</td><td>0,04%</td></tr><tr class="treasury-item"><td>Conta 9700-4</td><td>R$ 1.480.077,57</td><td>0,14%</td></tr><tr class="treasury-item"><td>Conta 9701-2</td><td>R$ 20.438.270,78</td><td>1,87%</td></tr><tr class="treasury-item"><td>Conta 9702-0</td><td>R$ 10.690.384,47</td><td>0,98%</td></tr><tr class="treasury-item"><td>Conta 10309-8</td><td>R$ 1.093.935,27</td><td>0,10%</td></tr><tr class="treasury-item"><td>Conta 10391-8</td><td>R$ 761.368,79</td><td>0,07%</td></tr><tr class="treasury-item"><td>Conta 10533-3</td><td>R$ 3.079.652,77</td><td>0,28%</td></tr><tr class="treasury-item"><td>Conta 10535-X</td><td>R$ 1.026.550,92</td><td>0,09%</td></tr><tr class="treasury-item"><td>Conta 10560-0</td><td>R$ 507.383,95</td><td>0,05%</td></tr><tr class="treasury-group"><td><div class="treasury-subtotal-label">Convênios, programas e outras contas vinculadas</div><span class="desc">Recursos vinculados a programas, convênios, cessões e outras finalidades específicas.</span></td><td>R$ 37.805.854,06</td><td>3,47%</td></tr><tr class="treasury-item"><td>Amazônia Legal</td><td>R$ 432.801,13</td><td>0,04%</td></tr><tr class="treasury-item"><td>Ministério da Agricultura</td><td>R$ 976.782,23</td><td>0,09%</td></tr><tr class="treasury-item"><td>Cessão Onerosa – Pré-Sal</td><td>R$ 36.131.574,93</td><td>3,31%</td></tr><tr class="treasury-item"><td>PAGES/FIDA</td><td>R$ 264.695,77</td><td>0,02%</td></tr><tr class="treasury-total"><td>TOTAL GERAL DOS SALDOS FINANCEIROS</td><td>R$ 1.090.251.198,33</td><td>100,00%</td></tr></tbody>
+    </table>
+   </div>
+  </div>
+
+  <div class="treasury-footnote"><strong>Fonte:</strong> BI/SIGEF.</div>
+ </section>
+
+ <section class="card panel" style="margin-top:14px">
+  <div class="panel-head">
+   <div>
+    <h2>CAPAG Maranhão</h2>
+    <p>Evolução dos indicadores de endividamento, poupança corrente e liquidez • 2022–2026**</p>
+   </div>
+   <span class="metric-tag">Capacidade de Pagamento</span>
+  </div>
+
+  
+  <div class="capag-filter">
+   <div class="filter">
+    <label>Ano de referência</label>
+    <select id="capagYearSelect"></select>
+   </div>
+  </div>
+
+  <div class="capag-summary">
+   <div class="capag-kpi"><div class="yr" id="capagKpiTitle">Nota CAPAG</div><div class="value" id="capagKpiNote"></div><div class="note" id="capagKpiNoteSub"></div></div>
+   <div class="capag-kpi"><div class="yr">Endividamento</div><div class="value" id="capagKpiDebt"></div><div class="note" id="capagKpiDebtSub"></div></div>
+   <div class="capag-kpi"><div class="yr">Poupança Corrente</div><div class="value" id="capagKpiSavings"></div><div class="note" id="capagKpiSavingsSub"></div></div>
+   <div class="capag-kpi"><div class="yr">Índice de Liquidez</div><div class="value" id="capagKpiLiquidity"></div><div class="note" id="capagKpiLiquiditySub"></div></div>
+  </div>
+
+  <div class="capag-grid">
+   <div>
+    <div class="panel-head"><div><h2>Trajetória dos indicadores</h2><p>Percentuais informados para os três componentes da CAPAG</p></div></div>
+    <canvas id="capagChart"></canvas>
+    <div class="legend">
+     <span><i style="background:#0b5cab"></i>Endividamento</span>
+     <span><i style="background:#c98a12"></i>Poupança Corrente</span>
+     <span><i style="background:#c73b45"></i>Liquidez</span>
+    </div>
+   </div>
+
+   <div>
+    <div class="panel-head"><div><h2>Insights executivos</h2><p>Leitura dos dados apresentados</p></div></div>
+    <div class="capag-insights">
+     <div class="capag-insight"><strong>Melhora estrutural do endividamento</strong><span>O indicador recua de 40,61% em 2022 para 22,80% em 2026**, mantendo nota A em todos os anos analisados.</span></div>
+     <div class="capag-insight"><strong>Poupança corrente é o principal ponto de pressão</strong><span>O índice avança de 83,30% em 2025* para 93,49% em 2026**, passando de nota A para nota B.</span></div>
+     <div class="capag-insight"><strong>Liquidez se deteriora em 2026**</strong><span>O índice passa de 4,18% em 2025* para -2,50% em 2026**, passando de nota B para nota C, com obrigações financeiras de R$ 914,9 mi e disponibilidade bruta não vinculada de R$ 10,9 mi.</span></div>
+     <div class="capag-insight"><strong>Nota agregada muda de A para C</strong><span>A CAPAG informada foi A em 2024 e 2025* e passa para C em 2026**, apesar da redução do endividamento.</span></div>
+    </div>
+    <div class="capag-note-row">
+     <span class="capag-badge">2022: C</span><span class="capag-badge">2023: B</span><span class="capag-badge">2024: A</span><span class="capag-badge">2025*: A</span><span class="capag-badge">2026**: C</span>
+    </div>
+   </div>
+  </div>
+  <div class="capag-footnote">*Previsão para 2025 com base em dados publicados; **Previsão para 2026 com base na estimativa de fechamento do ano.</div>
+ </section>
+
+
+ <section class="card table-card">
+  <div class="panel-head"><div><h2>Resumo analítico</h2><p>Série mensal dos principais indicadores — realizado (jan–jul), 2º decêndio de agosto e projeção (set–dez)</p></div></div>
+  <div class="table-wrap"><table id="summaryTable"></table></div><div style="font-size:11px;color:#718096;margin-top:8px">* Valores projetados.</div>
+ </section>
+</main>
+
+<div class="footer">Fonte: SIGEF/BI. Dados informados pela Secretaria Adjunta do Tesouro e Dívida. Janeiro a julho: realizado. Agosto: realizado até o 2º decêndio. Setembro a dezembro: projeção. Elaboração: painel gerencial para monitoramento da execução financeira.</div>
+
+<script>
+const months = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
+const actualCutoff = 7; // jan–jul realizados; agosto = 2º decêndio realizado; set–dez projetados
+const D = {"receitas":[2804.5,2928.6,2462.3,2774.4,2870.7,3289.9,3019.7,2189.1,2567.2,2528.8,2819.0,2972.8],"tributaria":[1618.2,1510.8,1567.1,1722.6,1606.7,1647.0,1801.0,1413.4,1679.3,1594.7,1596.7,1605.4],"fpe":[1066.2,1320.3,809.5,946.7,1146.8,1193.8,758.6,703.6,787.9,834.1,1122.4,1267.4],"demais_receitas":[120.1,97.6,85.7,105.1,117.1,449.1,460.1,72.1,100.0,100.0,100.0,100.0],"despesas":[2434.5,2786.3,3010.3,2669.3,2970.8,3523.5,3462.5,2315.3,3497.4,2658.4,2553.7,3115.1],"obrigatorias":[2214.7,2297.4,2244.9,2290.3,2438.5,2827.1,2632.3,1597.6,2394.8,2358.4,2353.7,2915.1],"discricionarias":[219.8,488.9,765.4,379.0,532.3,696.4,830.2,717.7,1102.6,300.0,200.0,200.0],"resultado":[370.0,142.3,-548.0,105.1,-100.1,-233.6,-442.8,-126.1,-930.2,-129.6,265.4,-142.2],"investimentos":[0.0,147.2,437.3,151.1,335.7,410.6,596.4,556.0,802.6,0.0,0.0,0.0],"raps":[115.5,145.9,23.8,35.7,6.1,41.7,11.7,14.5,0.0,0.0,0.0,0.0],"custeio_geral":[104.3,195.8,304.3,192.3,190.5,244.1,222.1,147.1,300.0,300.0,200.0,200.0],"rtc":[735.0,578.4,607.5,617.2,738.4,634.4,724.6,503.6,671.7,637.9,638.7,642.2],"saude":[197.5,342.5,348.7,327.3,312.0,413.8,319.7,271.4,348.5,348.5,348.5,348.5],"educacao":[0.0,21.3,54.4,63.0,44.3,29.4,78.1,50.8,35.0,35.0,35.0,35.0],"divida":[76.9,88.9,110.0,85.1,78.7,68.2,86.8,51.9,72.5,71.9,56.8,57.2],"emendas":[20.4,78.6,77.7,44.8,57.6,137.1,187.9,32.5,54.8,54.8,54.8,54.8],"poderes":[384.2,384.0,393.1,376.5,392.3,412.8,389.7,388.7,382.0,382.0,382.0,467.7],"executivo":[644.4,583.0,464.7,549.7,601.7,861.6,590.9,129.2,598.0,598.0,598.0,1078.0],"precatórios":[26.0,27.6,27.5,27.6,27.9,28.2,16.2,10.8,18.3,18.3,18.3,18.3],"custeio_prioritario":[87.4,137.2,94.0,141.7,143.2,192.9,179.2,116.4,157.3,155.3,155.3,156.7]};
+
+const investmentYears=["2023", "2024", "2025", "2026"];
+const capagYears=["2022","2023","2024","2025*","2026**"];
+const capagDebt=[40.61,37.58,23.32,24.24,22.80];
+const capagDebtNotes=["A","A","A","A","A"];
+const capagSavings=[86.32,88.11,80.41,83.30,93.49];
+const capagSavingsNotes=["B","B","A","A","B"];
+const capagLiquidity=[0.00,0.00,4.31,4.18,-2.50];
+const capagLiquidityNotes=["C","B","B","B","C"];
+const capagNotes=["C","B","A","A","C"];
+
+const investmentData=[{"orgao":"SINFRA","2023":1258602938.69,"2024":1650617897.25,"2025":2233200478.86,"2026":2053661920.09},{"orgao":"SECID","2023":65404385.01,"2024":8911275.43,"2025":9584577.64,"2026":10430433.29},{"orgao":"SEDEL","2023":16110035.24,"2024":3880220.32,"2025":0.0,"2026":1700898.4},{"orgao":"AGEM","2023":8847110.22,"2024":7033815.88,"2025":6484609.11,"2026":3914128.42},{"orgao":"AGEM SUL","2023":8050383.08,"2024":48752723.9,"2025":187894009.37,"2026":162853153.21},{"orgao":"SEAP","2023":3356977.35,"2024":1287548.96,"2025":5822630.76,"2026":1222428.24},{"orgao":"SEDES","2023":1968507.35,"2024":1004086.13,"2025":451672.48,"2026":180726.98},{"orgao":"IEMA","2023":1538164.06,"2024":8445698.51,"2025":1223111.0,"2026":0.0},{"orgao":"SSP","2023":1270933.1,"2024":3856355.0,"2025":3684408.24,"2026":676420.0},{"orgao":"SEAD","2023":1160437.94,"2024":0.0,"2025":0.0,"2026":0.0},{"orgao":"Encargos Administrativos","2023":1051828.98,"2024":0.0,"2025":0.0,"2026":0.0},{"orgao":"SEGOV","2023":826936.39,"2024":265250741.79,"2025":435581648.11,"2026":401977361.26},{"orgao":"UEMA","2023":801894.81,"2024":1777584.09,"2025":5839961.97,"2026":2810724.7},{"orgao":"Secretaria de Estado do Trabalho e da Economia Solidária","2023":476766.52,"2024":120000.0,"2025":0.0,"2026":0.0},{"orgao":"Secretaria de Estado do Planejamento e Orçamento","2023":418616.2,"2024":82198.93,"2025":40839.59,"2026":620718.9},{"orgao":"Corpo de Bombeiros Militar","2023":325000.0,"2024":99026.12,"2025":0.0,"2026":0.0},{"orgao":"Polícia Militar do Estado","2023":270294.89,"2024":5175.0,"2025":250000.0,"2026":225000.0},{"orgao":"Secretaria de Estado da Agricultura Familiar","2023":222002.75,"2024":1733862.0,"2025":0.0,"2026":0.0},{"orgao":"Secretaria de Estado da Transparência e Controle","2023":206495.12,"2024":122354.69,"2025":111436.89,"2026":18765.0},{"orgao":"Casa Civil","2023":193209.6,"2024":10210.72,"2025":0.0,"2026":41800.0},{"orgao":"Secretaria de Estado do Turismo","2023":148404.06,"2024":0.0,"2025":15843.0,"2026":0.0},{"orgao":"Secretaria de Estado dos Direitos Humanos e Participação Popular","2023":130000.0,"2024":209008.0,"2025":0.0,"2026":0.0},{"orgao":"Universidade Estadual da Região Tocantina do Maranhão","2023":82085.7,"2024":639862.55,"2025":5268911.95,"2026":102932.8},{"orgao":"Secretaria de Estado de Articulação Política","2023":73584.0,"2024":0.0,"2025":15800.0,"2026":0.0},{"orgao":"Secretaria de Estado da Pesca e Aquicultura","2023":62359.0,"2024":0.0,"2025":3785547.0,"2026":0.0},{"orgao":"Fundação da Memória Republicana Brasileira","2023":32800.0,"2024":0.0,"2025":0.0,"2026":0.0},{"orgao":"Secretaria de Estado da Educação","2023":26224.89,"2024":4201092.63,"2025":504567.9,"2026":0.0},{"orgao":"Secretaria de Estado da Comunicação Social","2023":16257.12,"2024":642598.23,"2025":0.0,"2026":0.0},{"orgao":"Instituto de Previdência dos Servidores do Estado do Maranhão","2023":16149.25,"2024":4043.61,"2025":0.0,"2026":36858.0},{"orgao":"Procuradoria Geral do Estado","2023":14748.0,"2024":21891.0,"2025":0.0,"2026":0.0},{"orgao":"Agência Estadual de Mobilidade Urbana e Serviços Públicos","2023":12735.0,"2024":42142.32,"2025":44892.9,"2026":0.0},{"orgao":"Departamento Estadual de Trânsito","2023":0.0,"2024":291480.0,"2025":0.0,"2026":0.0},{"orgao":"Fundação de Amparo à Pesquisa e ao Desenvolvimento Científico e Tecnológico do Maranhão","2023":0.0,"2024":83232.65,"2025":1344641.08,"2026":0.0},{"orgao":"Agência Estadual de Defesa Agropecuária do Maranhão","2023":0.0,"2024":69656.57,"2025":21148.35,"2026":0.0},{"orgao":"Fundo Penitenciário Estadual","2023":0.0,"2024":26042.0,"2025":0.0,"2026":0.0},{"orgao":"Instituto Maranhense de Estudos Socioeconômicos e Cartográficos","2023":0.0,"2024":13597.0,"2025":17500.0,"2026":0.0},{"orgao":"Secretaria de Estado da Representação Institucional no Distrito Federal","2023":0.0,"2024":12192.0,"2025":0.0,"2026":0.0},{"orgao":"Agência Estadual de Pesquisa Agropecuária e Extensão Rural do Maranhão","2023":0.0,"2024":10380.27,"2025":0.0,"2026":0.0},{"orgao":"Secretaria de Estado da Fazenda","2023":0.0,"2024":0.0,"2025":1335519.73,"2026":0.0},{"orgao":"Junta Comercial do Estado do Maranhão","2023":0.0,"2024":0.0,"2025":89110.0,"2026":0.0},{"orgao":"Secretaria de Estado da Cultura","2023":0.0,"2024":0.0,"2025":36223.0,"2026":0.0},{"orgao":"Instituto de Promoção e Defesa do Cidadão e Consumidor do Estado do Maranhão","2023":0.0,"2024":0.0,"2025":7990.0,"2026":0.0}];
+const investmentTotals={"2023":1371718264.32,"2024":2009257993.55,"2025":2902657078.93,"2026":2640474269.29};
+let selectedInvestmentYear="2026";
+
+
+const powerYears=["2023", "2024", "2025", "2026"];
+const powerData=[{"codigo":"ALEMA","poder":"ALEMA","2023":615462282.14,"2024":738230765.92,"2025":757371680.36,"2026":569383489.84},{"codigo":"DPE","poder":"DPE","2023":245978228.97,"2024":282254440.38,"2025":372130578.38,"2026":291434753.22},{"codigo":"PGJ","poder":"PGJ","2023":724918167.62,"2024":783835648.6,"2025":955422000.04,"2026":652204676.86},{"codigo":"TCE","poder":"TCE","2023":220124901.4,"2024":248197281.3,"2025":302683008.85,"2026":198390057.66},{"codigo":"TJ","poder":"TJ","2023":1766582853.78,"2024":1913975266.31,"2025":2316893365.7,"2026":1674270585.23}];
+const powerTotals={"2023":3573066433.91,"2024":3966493402.51,"2025":4704500633.33,"2026":3385683562.81};
+let selectedPowerYear="2026";
+
+const cashLabels=["31/dez/25","Jan","Fev","Mar","Abr","Mai","Jun","Jul","2º dec. Ago","Set","Out","Nov","Dez"];
+const cashAvailability=[1831.6,2201.6,2343.9,1795.9,1901.0,1800.9,1567.3,1124.5,998.4,68.2,-61.4,204.0,61.8];
+const cashChanges=[null,370.0,142.3,-548.0,105.1,-100.1,-233.6,-442.8,-126.1,-930.2,-129.6,265.4,-142.2];
+
+
+let idx = 7;
+
+const fmt = v => "R$ " + v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + " mi";
+const pct = v => v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "%";
+const short = v => v.toLocaleString("pt-BR",{minimumFractionDigits:0,maximumFractionDigits:0});
+const val = k => D[k][idx];
+const prev = k => idx===0 ? null : D[k][idx-1];
+
+function setup(){
+ const s=document.getElementById("monthSelect");
+ months.forEach((m,i)=>{const o=document.createElement("option");o.value=i;o.textContent=i===7?"2º Decêndio de Agosto":m+(i<=actualCutoff?" — realizado":" — projeção");s.appendChild(o)});
+ s.value=idx;s.onchange=e=>{idx=+e.target.value;render()}; const iy=document.getElementById("investmentYearSelect");iy.onchange=e=>{selectedInvestmentYear=e.target.value;drawInvestmentRanking()}; const py=document.getElementById("powerYearSelect");py.onchange=e=>{selectedPowerYear=e.target.value;drawPowersRanking()};
+}
+
+function setState(cardId,valueId,value,state){
+ const card=document.getElementById(cardId), el=document.getElementById(valueId);
+ card.className="card kpi"+(state?" "+state:"");el.className="kpi-value "+(state==="good"?"goodText":state==="bad"?"badText":state==="warn"?"warnText":"");
+ el.textContent=value;
+}
+
+function renderKpis(){
+ const r=val("receitas"),d=val("despesas"),res=r-d,liq=r/d*100,inv=val("investimentos");
+ setState("cardReceita","kpiReceita",fmt(r),"");
+ setState("cardDespesa","kpiDespesa",fmt(d),"");
+ setState("cardResultado","kpiResultado",fmt(res),res>=0?"good":"bad");
+ setState("cardLiquidez","kpiLiquidez",pct(liq),liq>=100?"good":liq>=95?"warn":"bad");
+ setState("cardInvest","kpiInvest",fmt(inv),"");
+ const pr=prev("receitas"),pd=prev("despesas");
+ document.getElementById("subReceita").textContent=pr?(((r/pr)-1)*100).toFixed(1).replace(".",",")+"% frente ao mês anterior":"Base inicial";
+ document.getElementById("subDespesa").textContent=pd?(((d/pd)-1)*100).toFixed(1).replace(".",",")+"% frente ao mês anterior":"Base inicial";
+ document.getElementById("subInvest").textContent=pct(r?inv/r*100:0)+" da receita do mês • "+(idx===7?"2º decêndio realizado":idx<=actualCutoff?"realizado":"projeção");
+}
+
+function canvas(id,h=280){
+ const c=document.getElementById(id),r=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+ c.width=r.width*dpr;c.height=h*dpr;const ctx=c.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,r.width,h);return [ctx,r.width,h];
+}
+function grid(ctx,w,h,maxV,minV=0,left=52,bottom=34){
+ ctx.font="10px Segoe UI";ctx.fillStyle="#718096";ctx.strokeStyle="#e2e8f0";ctx.lineWidth=1;
+ for(let i=0;i<=4;i++){const y=18+(h-bottom-18)*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-10,y);ctx.stroke();
+ const v=maxV-(maxV-minV)*i/4;ctx.fillText(short(v),6,y+3)}
+}
+
+function shadeProjection(ctx,w,h,n,left=52,right=10,top=18,bottom=34){
+ if(n<=actualCutoff+1) return;
+ const plotW=w-left-right;
+ const step=plotW/Math.max(n-1,1);
+ const x=left+step*(actualCutoff+0.5);
+ ctx.save();
+ ctx.fillStyle="rgba(215,162,58,0.08)";
+ ctx.fillRect(x,top,w-right-x,h-bottom-top);
+ ctx.strokeStyle="rgba(201,138,18,0.75)";
+ ctx.setLineDash([5,4]);
+ ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,h-bottom);ctx.stroke();
+ ctx.setLineDash([]);
+ ctx.fillStyle="#9a6a0a";ctx.font="bold 10px Segoe UI";ctx.fillText("PROJEÇÃO",x+6,top+12);
+ ctx.restore();
+}
+
+function drawLineChart(){
+ const [ctx,w,h]=canvas("cashChart"),a=D.receitas.slice(0,idx+1),b=D.despesas.slice(0,idx+1),maxV=Math.max(...a,...b)*1.18;
+ grid(ctx,w,h,maxV);
+ shadeProjection(ctx,w,h,a.length,52,10,18,34);
+ const draw=(arr,color,labelSide)=>{ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/Math.max(arr.length-1,1)),y=18+(h-52)*(1-v/maxV);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/Math.max(arr.length-1,1)),y=18+(h-52)*(1-v/maxV);
+ ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);ctx.fill();
+ const label=short(v);ctx.font="bold 11px Segoe UI";
+ // Mantém uma faixa visual consistente: receitas sempre acima e despesas sempre abaixo do ponto.
+ let ly=labelSide==="above"?y-18:y+24;if(ly<13)ly=13;if(ly>h-42)ly=h-42;
+ ctx.textAlign="center";ctx.lineJoin="round";ctx.miterLimit=2;
+ // Fundo permanece transparente; halo branco reforçado destaca o número sem criar caixas opacas.
+ ctx.strokeStyle="rgba(255,255,255,.98)";ctx.lineWidth=5;ctx.strokeText(label,x,ly);
+ ctx.fillStyle=color;ctx.globalAlpha=.98;ctx.fillText(label,x,ly);ctx.globalAlpha=1;
+ ctx.fillStyle="#718096";ctx.font="10px Segoe UI";ctx.fillText(months[i],x,h-10)});ctx.textAlign="start"};
+ draw(a,"#0b5cab","above");draw(b,"#c73b45","below");
+}
+function drawResult(){
+ const [ctx,w,h]=canvas("resultChart"),arr=D.resultado.slice(0,idx+1),m=Math.max(...arr.map(Math.abs))*1.35||1,zero=h/2;
+ shadeProjection(ctx,w,h,arr.length,48,10,18,34);
+ ctx.strokeStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(48,zero);ctx.lineTo(w-10,zero);ctx.stroke();
+ const slot=(w-68)/arr.length,bw=slot*.55;
+ arr.forEach((v,i)=>{const x=54+i*slot+slot*.22,y=zero-(v/m)*(h*.36);ctx.fillStyle=v>=0?"#16845b":"#c73b45";ctx.fillRect(x,Math.min(y,zero),bw,Math.abs(y-zero));
+ ctx.font="10px Segoe UI";ctx.textAlign="center";ctx.fillStyle=v>=0?"#16845b":"#c73b45";ctx.fillText(short(v),x+bw/2,v>=0?y-7:y+14);ctx.fillStyle="#718096";ctx.fillText(months[i],x+bw/2,h-10)});ctx.textAlign="start";
+}
+function drawStacked(id,series,colors){
+ const [ctx,w,h]=canvas(id),n=series[0].length,totals=Array.from({length:n},(_,i)=>series.reduce((s,a)=>s+a[i],0)),maxV=Math.max(...totals)*1.18;
+ grid(ctx,w,h,maxV);shadeProjection(ctx,w,h,n,52,10,18,34);const slot=(w-70)/n,bw=slot*.58;
+ const labelColors=colors.map(c=>["#9ccbeb","#d7a23a"].includes(c)?"#102a43":"#ffffff");
+ for(let i=0;i<n;i++){
+   let base=h-34;
+   for(let s=0;s<series.length;s++){
+     const value=series[s][i];
+     const hh=(value/maxV)*(h-54);
+     const x=56+i*slot+slot*.2;
+     const y=base-hh;
+     ctx.fillStyle=colors[s];
+     ctx.fillRect(x,y,bw,hh);
+
+     const label=short(value);
+     ctx.textAlign="center";
+     ctx.font="bold 9px Segoe UI";
+     if(hh>=18){
+       ctx.fillStyle=labelColors[s];
+       ctx.fillText(label,x+bw/2,y+hh/2+3);
+     }else if(value>0){
+       ctx.fillStyle="#102a43";
+       ctx.fillText(label,x+bw/2,y-3);
+     }
+     base-=hh;
+   }
+   ctx.font="10px Segoe UI";
+   ctx.textAlign="center";
+   ctx.fillStyle="#718096";
+   ctx.fillText(months[i],56+i*slot+slot*.2+bw/2,h-10);
+ }
+ ctx.textAlign="start";
+}
+
+function drawCumulativeResult(){
+ const [ctx,w,h]=canvas("cumulativeResultChart");
+ const monthly=D.resultado;
+ const arr=monthly.map((_,i)=>monthly.slice(0,i+1).reduce((a,b)=>a+b,0));
+ const minV=Math.min(0,...arr), maxV=Math.max(0,...arr);
+ const span=Math.max(maxV-minV,1);
+ const topPad=22,bottomPad=38,left=58,right=20;
+ const plotH=h-topPad-bottomPad, plotW=w-left-right;
+ const scaleY=v=>topPad+(maxV-v)/span*plotH;
+ const zeroY=scaleY(0);
+ shadeProjection(ctx,w,h,arr.length,left,right,topPad,bottomPad);
+
+ ctx.font="10px Segoe UI";
+ ctx.strokeStyle="#e2e8f0";
+ ctx.fillStyle="#718096";
+ ctx.lineWidth=1;
+
+ for(let i=0;i<=4;i++){
+   const value=maxV-(span*i/4);
+   const y=scaleY(value);
+   ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();
+   ctx.fillText(short(value),6,y+3);
+ }
+
+ ctx.strokeStyle="#94a3b8";
+ ctx.beginPath();ctx.moveTo(left,zeroY);ctx.lineTo(w-right,zeroY);ctx.stroke();
+
+ ctx.strokeStyle="#0b5cab";
+ ctx.lineWidth=3;
+ ctx.beginPath();
+ arr.forEach((v,i)=>{
+   const x=left+plotW*(i/Math.max(arr.length-1,1));
+   const y=scaleY(v);
+   i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+ });
+ ctx.stroke();
+
+ arr.forEach((v,i)=>{
+   const x=left+plotW*(i/Math.max(arr.length-1,1));
+   const y=scaleY(v);
+   ctx.fillStyle="#0b5cab";
+   ctx.beginPath();ctx.arc(x,y,4.5,0,Math.PI*2);ctx.fill();
+
+   ctx.font="10px Segoe UI";
+   ctx.textAlign="center";
+   ctx.fillStyle=v>=0?"#16845b":"#c73b45";
+   ctx.fillText(short(v),x,y+(v>=0?-10:17));
+
+   ctx.fillStyle="#718096";
+   ctx.fillText(months[i],x,h-11);
+ });
+ ctx.textAlign="start";
+}
+
+function drawPressure(){
+ const [ctx,w,h]=canvas("pressureChart"),items=[["RTC",val("rtc")],["Poderes",val("poderes")],["Saúde",val("saude")],["Custeio",479],["Investimentos",val("investimentos")],["Emendas",val("emendas")],["Dívida",val("divida")]].sort((a,b)=>b[1]-a[1]),maxV=Math.max(...items.map(x=>x[1]))||1;
+ items.forEach((it,i)=>{const y=22+i*39;ctx.fillStyle="#60758a";ctx.font="11px Segoe UI";ctx.fillText(it[0],8,y+13);ctx.fillStyle="#e8eef4";ctx.fillRect(98,y,w-135,18);
+ ctx.fillStyle="#0b5cab";ctx.fillRect(98,y,(w-135)*it[1]/maxV,18);ctx.fillStyle="#102a43";ctx.font="10px Segoe UI";ctx.fillText(short(it[1]),Math.min(104+(w-135)*it[1]/maxV,w-32),y+13)});
+}
+
+function renderInsights(){
+ const res=val("resultado"),liq=val("receitas")/val("despesas")*100,rig=val("obrigatorias")/val("despesas")*100,invest=val("investimentos"),r=val("receitas");
+ const items=[
+  ["Resultado financeiro",res>=0?"Superávit":"Déficit",res>=0?"#16845b":"#c73b45",res>=0?`O mês apresenta saldo positivo de ${fmt(res)}.`:`As despesas superam as receitas em ${fmt(Math.abs(res))}.`],
+  ["Cobertura das despesas",liq>=100?"Adequada":liq>=95?"Atenção":"Crítica",liq>=100?"#16845b":liq>=95?"#c98a12":"#c73b45",`A receita cobre ${pct(liq)} das despesas executadas.`],
+  ["Estrutura do gasto",rig<80?"Menos rígida":rig<85?"Elevada":"Muito elevada",rig<80?"#16845b":rig<85?"#c98a12":"#c73b45",`As despesas obrigatórias representam ${pct(rig)} do gasto total.`],
+  ["Investimentos",invest/r<.12?"Moderados":invest/r<.18?"Elevados":"Muito elevados",invest/r<.12?"#16845b":invest/r<.18?"#c98a12":"#c73b45",`Foram executados ${fmt(invest)}, equivalentes a ${pct(r?invest/r*100:0)} da receita.`]
+ ];
+ const box=document.getElementById("insights");box.innerHTML=items.map(x=>`<div class="insight"><div class="insight-top"><div class="insight-title">${x[0]}</div><span class="badge" style="background:${x[2]}">${x[1]}</span></div><div class="insight-text">${x[3]}</div></div>`).join("");
+}
+
+
+function compactBrl(v){
+ if (Math.abs(v) >= 1e9) return "R$ " + (v/1e9).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " bi";
+ return "R$ " + (v/1e6).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + " mi";
+}
+function compactNum(v){
+ if (Math.abs(v) >= 1000) return v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+ return v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1});
+}
+function renderPowersSummary(){
+ const box=document.getElementById("powersSummary");
+ box.innerHTML=powerYears.map(y=>`<div class="mini-kpi"><div class="yr">${y}${y==="2026"?" • parcial":""}</div><div class="amt">${compactBrl(powerTotals[y])}</div></div>`).join("");
+}
+function drawPowersTotal(){
+ const [ctx,w,h]=canvas("powersTotalChart");
+ const arr=powerYears.map(y=>powerTotals[y]/1e9), maxV=Math.max(...arr)*1.18;
+ grid(ctx,w,h,maxV);
+ ctx.strokeStyle="#0b5cab";ctx.lineWidth=3;ctx.beginPath();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/3),y=18+(h-52)*(1-v/maxV);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/3),y=18+(h-52)*(1-v/maxV);ctx.fillStyle="#0b5cab";ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.textAlign="center";ctx.font="10px Segoe UI";ctx.fillStyle="#102a43";ctx.fillText(v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}),x,y-10);ctx.fillStyle="#718096";ctx.fillText(powerYears[i],x,h-10)});ctx.textAlign="start";
+}
+function drawPowersRanking(){
+ const [ctx,w,h]=canvas("powersRankingChart");
+ const arr=powerData.map(r=>[r.poder,r[selectedPowerYear]/1e9]).sort((a,b)=>b[1]-a[1]);
+ const maxV=Math.max(...arr.map(x=>x[1]),1);
+ arr.forEach((r,i)=>{const y=20+i*42;ctx.font="11px Segoe UI";ctx.fillStyle="#60758a";ctx.fillText(r[0],6,y+12);ctx.fillStyle="#e8eef4";ctx.fillRect(118,y,w-175,18);ctx.fillStyle="#0b5cab";ctx.fillRect(118,y,(w-175)*r[1]/maxV,18);ctx.fillStyle="#102a43";ctx.font="10px Segoe UI";ctx.fillText(r[1].toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+" bi",Math.min(124+(w-175)*r[1]/maxV,w-48),y+13)});
+}
+function drawPowersComposition(){
+ const [ctx,w,h]=canvas("powersCompositionChart");
+ const order=["TJ","PGJ","ALEMA","DPE","TCE"];
+ const colors={"TJ":"#0a2746","PGJ":"#0b5cab","ALEMA":"#2f80c9","DPE":"#76b7e5","TCE":"#d7a23a"};
+ const labelColors={"TJ":"#ffffff","PGJ":"#ffffff","ALEMA":"#ffffff","DPE":"#102a43","TCE":"#102a43"};
+ const totals=powerYears.map(y=>powerTotals[y]);
+ const left=62, right=18, top=26, bottom=40, plotW=w-left-right, plotH=h-top-bottom, slot=plotW/powerYears.length, bw=slot*.58;
+ for(let j=0;j<=4;j++){
+   const yy=top+plotH*j/4;
+   ctx.strokeStyle="#e2e8f0";
+   ctx.beginPath();
+   ctx.moveTo(left,yy);
+   ctx.lineTo(w-right,yy);
+   ctx.stroke();
+   ctx.fillStyle="#718096";
+   ctx.font="10px Segoe UI";
+   ctx.fillText((100-25*j)+"%",6,yy+3);
+ }
+ powerYears.forEach((yr,i)=>{
+   let base=top+plotH;
+   order.forEach(key=>{
+     const raw=powerData.find(x=>x.codigo===key)[yr];
+     const share=raw/totals[i];
+     const pct=share*100;
+     const hh=plotH*share;
+     const x=left+i*slot+slot*.2;
+     const y=base-hh;
+     ctx.fillStyle=colors[key];
+     ctx.fillRect(x,y,bw,hh);
+
+     const label=pct.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%";
+     ctx.textAlign="center";
+     ctx.font="bold 10px Segoe UI";
+
+     if(hh>=18){
+       ctx.fillStyle=labelColors[key];
+       ctx.fillText(label,x+bw/2,y+hh/2+3);
+     }else{
+       ctx.fillStyle="#102a43";
+       ctx.fillText(label,x+bw/2,y-4);
+     }
+     base-=hh;
+   });
+   ctx.textAlign="center";
+   ctx.font="10px Segoe UI";
+   ctx.fillStyle="#718096";
+   ctx.fillText(yr,left+i*slot+slot*.2+bw/2,h-10);
+ });
+ ctx.textAlign="start";
+}
+
+function investmentFmt(v){return "R$ "+(v/1000000).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+" mi";}
+
+function selectedCashIndex(){return Math.min(idx+1,cashAvailability.length-1)}
+function renderLiquidityHeader(){
+ const i=selectedCashIndex(),current=cashAvailability[i],base=cashAvailability[0];
+ document.getElementById("cashAvailabilityValue").textContent=fmt(current);
+ const variation=(current/base-1)*100;
+ const el=document.getElementById("cashAvailabilityVariation");
+ el.textContent=(variation>=0?"+":"")+variation.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"% desde 31/12/2025";
+ el.className="hero-sub "+(variation>=0?"goodText":"badText");
+}
+function drawCashAvailability(){
+ const [ctx,w,h]=canvas("cashAvailabilityChart");
+ const upto=selectedCashIndex();
+ const arr=cashAvailability.slice(0,upto+1);
+ const maxV=Math.max(...cashAvailability,2000)*1.12,minV=Math.min(...cashAvailability,800)*0.92,span=maxV-minV;
+ const left=58,right=18,top=20,bottom=38,plotW=w-left-right,plotH=h-top-bottom;
+ const y=v=>top+(maxV-v)/span*plotH;
+ for(let j=0;j<=4;j++){const val=maxV-span*j/4,yy=y(val);ctx.strokeStyle="#e2e8f0";ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(w-right,yy);ctx.stroke();ctx.fillStyle="#718096";ctx.font="10px Segoe UI";ctx.fillText(short(val),6,yy+3);}
+ const refY=y(2000);ctx.strokeStyle="#c98a12";ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(left,refY);ctx.lineTo(w-right,refY);ctx.stroke();ctx.setLineDash([]);
+ ctx.strokeStyle="#0b5cab";ctx.lineWidth=3;ctx.beginPath();
+ arr.forEach((v,i)=>{const x=left+plotW*(i/Math.max(arr.length-1,1)),yy=y(v);i?ctx.lineTo(x,yy):ctx.moveTo(x,yy)});ctx.stroke();
+ arr.forEach((v,i)=>{const x=left+plotW*(i/Math.max(arr.length-1,1)),yy=y(v);ctx.fillStyle="#0b5cab";ctx.beginPath();ctx.arc(x,yy,4.5,0,Math.PI*2);ctx.fill();ctx.textAlign="center";ctx.font="10px Segoe UI";ctx.fillStyle="#102a43";ctx.fillText(v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}),x,yy-10);ctx.fillStyle="#718096";ctx.fillText(cashLabels[i],x,h-10)});ctx.textAlign="start";
+}
+function drawCashChanges(){
+ const [ctx,w,h]=canvas("cashChangeChart");
+ const upto=selectedCashIndex();
+ const arr=cashChanges.slice(1,upto+1),labels=cashLabels.slice(1,upto+1);
+ const m=Math.max(...arr.map(v=>Math.abs(v)),1)*1.2,zero=h/2,slot=(w-64)/Math.max(arr.length,1),bw=slot*.55;
+ ctx.strokeStyle="#cbd5e1";ctx.beginPath();ctx.moveTo(48,zero);ctx.lineTo(w-10,zero);ctx.stroke();
+ arr.forEach((v,i)=>{const x=52+i*slot+slot*.22,yy=zero-(v/m)*(h*.35);ctx.fillStyle=v>=0?"#16845b":"#c73b45";ctx.fillRect(x,Math.min(yy,zero),bw,Math.abs(yy-zero));ctx.textAlign="center";ctx.font="10px Segoe UI";ctx.fillStyle=v>=0?"#16845b":"#c73b45";ctx.fillText((v>=0?"+":"")+v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}),x+bw/2,v>=0?yy-7:yy+14);ctx.fillStyle="#718096";ctx.fillText(labels[i],x+bw/2,h-10)});ctx.textAlign="start";
+}
+function renderLiquidityKpis(){
+ const i=selectedCashIndex(),current=cashAvailability[i],base=cashAvailability[0];
+ const arr=cashAvailability.slice(0,i+1),max=Math.max(...arr),min=Math.min(...arr);
+ const maxIdx=cashAvailability.indexOf(max),minIdx=cashAvailability.indexOf(min);
+ const loss=current-base;
+ const items=[
+  ["Saldo inicial",fmt(base),"31/12/2025"],
+  ["Saldo atual",fmt(current),cashLabels[i]],
+  ["Variação acumulada",(loss>=0?"+":"")+fmt(Math.abs(loss)),((current/base-1)*100).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+"%"],
+  ["Maior saldo",fmt(max),cashLabels[maxIdx]]
+ ];
+ document.getElementById("liquidityKpis").innerHTML=items.map(x=>`<div class="liq-card"><div class="label">${x[0]}</div><div class="value">${x[1]}</div><div class="sub">${x[2]}</div></div>`).join("");
+}
+
+function renderInvestmentSummary(){
+ const box=document.getElementById("investSummary");
+ box.innerHTML=investmentYears.map(y=>`<div class="mini-kpi"><div class="yr">${y}${y==="2026"?" • parcial":""}</div><div class="amt">${investmentFmt(investmentTotals[y])}</div></div>`).join("");
+}
+function drawAnnualInvestment(){
+ const [ctx,w,h]=canvas("annualInvestmentChart");
+ const arr=investmentYears.map(y=>investmentTotals[y]/1000000),maxV=Math.max(...arr)*1.18;
+ grid(ctx,w,h,maxV);
+ ctx.strokeStyle="#0b5cab";ctx.lineWidth=3;ctx.beginPath();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/3),y=18+(h-52)*(1-v/maxV);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+ arr.forEach((v,i)=>{const x=58+(w-78)*(i/3),y=18+(h-52)*(1-v/maxV);ctx.fillStyle="#0b5cab";ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fill();ctx.textAlign="center";ctx.font="10px Segoe UI";ctx.fillStyle="#102a43";ctx.fillText(v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}),x,y-10);ctx.fillStyle="#718096";ctx.fillText(investmentYears[i],x,h-10)});ctx.textAlign="start";
+}
+function shortOrg(n){
+ const m={
+  "Secretaria de Estado da Administração":"SEAD",
+  "Secretaria de Estado do Trabalho e da Economia Solidária":"SETRES",
+  "Secretaria de Estado do Planejamento e Orçamento":"SEPLAN",
+  "Secretaria de Estado da Transparência e Controle":"STC",
+  "Secretaria de Estado dos Direitos Humanos e Participação Popular":"SEDIHPOP",
+  "Secretaria de Estado de Articulação Política":"SEAPOL",
+  "Secretaria de Estado da Pesca e Aquicultura":"SEPA",
+  "Secretaria de Estado da Comunicação Social":"SECOM",
+  "Instituto de Previdência dos Servidores do Estado do Maranhão":"IPREV",
+  "Agência Estadual de Mobilidade Urbana e Serviços Públicos":"MOB",
+  "Agência Estadual de Defesa Agropecuária do Maranhão":"AGED",
+  "Instituto Maranhense de Estudos Socioeconômicos e Cartográficos":"IMESC",
+  "Secretaria de Estado da Representação Institucional no Distrito Federal":"SERIDF",
+  "Agência Estadual de Pesquisa Agropecuária e Extensão Rural do Maranhão":"AGERP",
+  "Instituto de Promoção e Defesa do Cidadão e Consumidor do Estado do Maranhão":"PROCON"
+ };
+ return m[n]||n;
+}
+function drawInvestmentRanking(){
+ const [ctx,w,h]=canvas("investmentRankingChart");
+ const arr=investmentData.map(r=>[shortOrg(r.orgao),r[selectedInvestmentYear]/1000000]).filter(r=>r[1]>0).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ const maxV=Math.max(...arr.map(x=>x[1]),1);
+ arr.forEach((r,i)=>{const y=13+i*25;ctx.font="10px Segoe UI";ctx.fillStyle="#60758a";ctx.fillText(r[0],5,y+11);ctx.fillStyle="#e8eef4";ctx.fillRect(112,y,w-165,15);ctx.fillStyle="#0b5cab";ctx.fillRect(112,y,(w-165)*r[1]/maxV,15);ctx.fillStyle="#102a43";ctx.fillText(r[1].toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}),Math.min(118+(w-165)*r[1]/maxV,w-42),y+11)});
+}
+
+
+
+function capagNoteClass(note){
+ return note==="A"?"goodText":note==="B"?"warnText":"badText";
+}
+function fmtPct(v){
+ return v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%";
+}
+function renderCapagKpis(i){
+ const year=capagYears[i];
+ const note=capagNotes[i];
+ const noteEl=document.getElementById("capagKpiNote");
+ document.getElementById("capagKpiTitle").textContent="Nota CAPAG • "+year;
+ noteEl.textContent=note;
+ noteEl.className="value "+capagNoteClass(note);
+ document.getElementById("capagKpiNoteSub").textContent="Classificação agregada no ano selecionado";
+
+ const debtEl=document.getElementById("capagKpiDebt");
+ debtEl.textContent=fmtPct(capagDebt[i]);
+ debtEl.className="value "+capagNoteClass(capagDebtNotes[i]);
+ document.getElementById("capagKpiDebtSub").textContent="Nota "+capagDebtNotes[i];
+
+ const savEl=document.getElementById("capagKpiSavings");
+ savEl.textContent=fmtPct(capagSavings[i]);
+ savEl.className="value "+capagNoteClass(capagSavingsNotes[i]);
+ document.getElementById("capagKpiSavingsSub").textContent="Nota "+capagSavingsNotes[i];
+
+ const liqEl=document.getElementById("capagKpiLiquidity");
+ liqEl.textContent=fmtPct(capagLiquidity[i]);
+ liqEl.className="value "+capagNoteClass(capagLiquidityNotes[i]);
+ document.getElementById("capagKpiLiquiditySub").textContent="Nota "+capagLiquidityNotes[i];
+}
+function initCapagFilter(){
+ const sel=document.getElementById("capagYearSelect");
+ if(!sel) return;
+ sel.innerHTML=capagYears.map((y,i)=>`<option value="${i}">${y}</option>`).join("");
+ sel.value=String(capagYears.length-1);
+ sel.onchange=()=>renderCapagKpis(Number(sel.value));
+ renderCapagKpis(Number(sel.value));
+}
+
+function drawCapagChart(){
+ const [ctx,w,h]=canvas("capagChart");
+ const left=54,right=18,top=20,bottom=38,plotW=w-left-right,plotH=h-top-bottom;
+ const minV=-10,maxV=100,span=maxV-minV;
+ const y=v=>top+(maxV-v)/span*plotH;
+ const x=i=>left+plotW*(i/(capagYears.length-1));
+ for(let j=0;j<=5;j++){
+   const val=maxV-(span*j/5),yy=y(val);
+   ctx.strokeStyle="#e2e8f0";ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(w-right,yy);ctx.stroke();
+   ctx.fillStyle="#718096";ctx.font="10px Segoe UI";ctx.textAlign="right";ctx.fillText(val.toFixed(0)+"%",left-7,yy+3);
+ }
+ const series=[
+   {arr:capagDebt,color:"#0b5cab",offset:-10},
+   {arr:capagSavings,color:"#c98a12",offset:-10},
+   {arr:capagLiquidity,color:"#c73b45",offset:14}
+ ];
+ series.forEach(s=>{
+   ctx.strokeStyle=s.color;ctx.lineWidth=2.5;ctx.beginPath();
+   s.arr.forEach((v,i)=>{const xx=x(i),yy=y(v);i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)});ctx.stroke();
+   s.arr.forEach((v,i)=>{
+     const xx=x(i),yy=y(v);
+     ctx.fillStyle=s.color;ctx.beginPath();ctx.arc(xx,yy,4,0,Math.PI*2);ctx.fill();
+     ctx.textAlign="center";ctx.font="bold 9.5px Segoe UI";ctx.fillStyle="#102a43";
+     ctx.fillText(v.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2})+"%",xx,yy+s.offset);
+   });
+ });
+ capagYears.forEach((yr,i)=>{ctx.fillStyle="#718096";ctx.font="10px Segoe UI";ctx.textAlign="center";ctx.fillText(yr,x(i),h-10)});
+ ctx.textAlign="start";
+}
+
+
+const treasuryTotal=1090.25119833;
+const treasuryComponents=[
+ ["Poupança I",245.35230846],
+ ["13º Salário do Executivo",180.00000000],
+ ["Conta Única • Saúde",147.14093766],
+ ["Provisão FEMA/Vale",99.52420200],
+ ["Conta Movimento",70.41962501],
+ ["PROINVEST",40.76564330],
+ ["Cessão Onerosa • Pré-Sal",36.13157493],
+ ['Conta "C"',32.60579277],
+ ["Conta Única • SEDUC",30.46904067],
+ ["13º Salário dos Demais Poderes",30.00000000]
+];
+
+function drawTreasuryComponentsChart(){
+ const [ctx,w,h]=canvas("treasuryComponentsChart",330);
+ const data=treasuryComponents;
+ const maxV=Math.max(...data.map(d=>d[1]))||1;
+ const left=Math.min(Math.max(w*.28,155),220);
+ const right=118, top=18, rowH=(h-34)/data.length;
+ const barH=Math.min(24,rowH*.52);
+
+ ctx.font="10px Segoe UI";
+ ctx.fillStyle="#718096";
+ ctx.textAlign="right";
+ [0,25,50,75,100].forEach(p=>{
+   const x=left+(w-left-right)*(p/100);
+   ctx.strokeStyle="#e6edf3";ctx.lineWidth=1;
+   ctx.beginPath();ctx.moveTo(x,top-4);ctx.lineTo(x,h-10);ctx.stroke();
+   ctx.fillStyle="#829ab1";ctx.fillText((maxV*p/100).toLocaleString("pt-BR",{maximumFractionDigits:0}),x,10);
+ });
+
+ data.forEach((d,i)=>{
+   const y=top+i*rowH+10;
+   const bw=(w-left-right)*(d[1]/maxV);
+ctx.textAlign="right";
+   ctx.font="600 10.5px Segoe UI";
+   ctx.fillStyle="#334e68";
+   ctx.fillText(d[0],left-10,y+barH*.72);
+
+   ctx.fillStyle="#e9f0f6";
+   roundRect(ctx,left,y,w-left-right,barH,6,true,false);
+
+   ctx.fillStyle=i<3?"#0b5cab":"#4f89b6";
+   roundRect(ctx,left,y,bw,barH,6,true,false);
+
+   ctx.textAlign="left";
+   ctx.font="800 10.5px Segoe UI";
+   ctx.fillStyle="#102a43";
+   ctx.fillText("R$ "+d[1].toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})+" mi",left+bw+8,y+barH*.68);
+ });
+ ctx.textAlign="start";
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+ if(w<0){x+=w;w=-w}
+ if(w<2*r)r=w/2;if(h<2*r)r=h/2;
+ ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);
+ ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();
+ if(fill)ctx.fill();if(stroke)ctx.stroke();
+}
+
+function renderTable(){
+ const rows=[["Receitas","receitas"],["Despesas","despesas"],["Resultado","resultado"],["Obrigatórias","obrigatorias"],["Discricionárias","discricionarias"],["Investimentos","investimentos"],["RTC","rtc"],["Saúde","saude"],["Emendas","emendas"]];
+ let h="<thead><tr><th>Indicador</th>"+months.map((m,i)=>`<th>${m}${i>actualCutoff?"*":""}</th>`).join("")+"</tr></thead><tbody>";
+ rows.forEach(r=>{h+=`<tr><td>${r[0]}</td>`+D[r[1]].map(v=>`<td>${v.toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1})}</td>`).join("")+"</tr>"});
+ document.getElementById("summaryTable").innerHTML=h+"</tbody>";
+}
+function render(){
+ renderKpis();renderLiquidityHeader();drawCashAvailability();renderLiquidityKpis();drawLineChart();drawResult();
+ drawStacked("revenueChart",[D.tributaria.slice(0,idx+1),D.fpe.slice(0,idx+1),D.demais_receitas.slice(0,idx+1)],["#0b5cab","#2f80c9","#9ccbeb"]);
+ drawStacked("expenseMixChart",[D.obrigatorias.slice(0,idx+1),D.discricionarias.slice(0,idx+1)],["#0a2746","#d7a23a"]);
+ drawCumulativeResult();drawPressure();renderInsights();drawTreasuryComponentsChart();initCapagFilter();drawCapagChart();renderPowersSummary();drawPowersTotal();drawPowersRanking();drawPowersComposition();renderInvestmentSummary();drawAnnualInvestment();drawInvestmentRanking();renderTable();
+}
+window.addEventListener("resize",render);setup();render();
+</script>
+</body>
+</html>
